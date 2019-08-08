@@ -1,0 +1,283 @@
+<!-- HEADER MENU -->
+<header class="sticky-top">
+    <nav class="navbar navbar-expand-sm navbar-dark">
+        <div class="col-md-6">
+            <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse"
+                data-target="#collapsibleNavId" aria-controls="false" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <i class="fa fa-align-justify"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavId">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item active">
+                        <a class="nav-link" routerLink="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/news">News</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6 ">
+            <div class="social">
+                <div class="attr-nav">
+                    <ul>
+                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                        <li class="LineFence"><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                        <li *ngIf="!statusLogin; else loginSuccess">
+                            <a data-toggle="modal" data-target="#modalDangNhap">Login</a>
+                        </li>
+                        <li *ngIf="!statusLogin; else logout">
+                            <a data-toggle="modal" data-target="#modalDangKy">Register</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<ng-template #loginSuccess>
+    <li>
+        <div class="dropdown">
+            <a data-toggle="dropdown" >Hello {{nguoiDung.TaiKhoan}}</a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" data-toggle="modal" data-target="#modalNguoiDung" (click)="loadUser()">Sửa thông tin</a>
+                <a class="dropdown-item" data-toggle="modal" data-target="#modalDoiMatKhau">Đổi mật khẩu</a>
+            </div>
+        </div>       
+    </li>  
+</ng-template>
+
+<ng-template #logout>
+    <li>
+        <a (click)="dangXuat()">Đăng xuất</a>
+    </li>
+</ng-template>
+<!-- END HEADER MENU -->
+
+<!-- modal đăng nhập -->
+<div class="modal fade modalAccount" id="modalDangNhap">
+    <div class="modal-dialog">
+        <div class="modal-content modal-dang-nhap">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Đăng nhập</h4>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form #loginForm="ngForm" (ngSubmit)="dangNhap(loginForm.value)">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Tài khoản" name="TaiKhoan" #TaiKhoan="ngModel" ngModel>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" placeholder="Mật khẩu" name="MatKhau" #MatKhau="ngModel" ngModel>
+                    </div>
+                    <p>Bạn chưa có tài khoản?<a data-toggle="modal" data-target="#modalDangKy" (click)="dongDangNhap()">Đăng ký</a></p>
+                    <button type="submit" class="btn btn-primary btn-modal" >Đăng nhập</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal đăng ký -->
+<div class="modal fade modalAccount" id="modalDangKy">
+    <div class="modal-dialog">
+        <div class="modal-content modal-dang-ky">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Đăng Ký</h4>
+            </div>
+        
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form #registerForm = "ngForm" (ngSubmit) = "dangKy(registerForm.value)">
+                    <div class="form-group">
+                        <input type="text" minlength="3" maxlength="10" name="taiKhoan" class="form-control" placeholder="Tài khoản" #taiKhoan="ngModel" ngModel required>
+                        <!-- validation -->
+                        <div *ngIf="taiKhoan.errors && (taiKhoan.dirty || taiKhoan.touched)">
+                            <!-- kiểm tra rỗng -->
+                            <p *ngIf="taiKhoan.errors.required" class="thong-bao">
+                            Vui lòng nhập tài khoản!
+                            </p>
+                    
+                            <!-- kiểm tra độ dài -->
+                            <p *ngIf="taiKhoan.errors.minlength || taiKhoan.errors.maxlength" class="thong-bao">
+                            Vui lòng nhập từ 3 đến 10 ký tự!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" placeholder="Mật khẩu" name="password" #matKhau="ngModel" ngModel required>
+                        <!-- validation -->
+                        <div *ngIf="matKhau.errors && (matKhau.dirty || matKhau.touched)">
+                            <!-- kiểm tra rỗng -->
+                            <p *ngIf="matKhau.errors.required" class="thong-bao">
+                            vui lòng nhập mật khẩu!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Họ tên" name="HoTen" #HoTen="ngModel" ngModel required>
+                        <!-- validation -->
+                        <div *ngIf="HoTen.errors && (HoTen.dirty || HoTen.touched)">
+                            <!-- kiểm tra rỗng -->
+                            <p *ngIf="HoTen.errors.required" class="thong-bao">
+                            vui lòng nhập họ tên!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" name="email" #Email="ngModel" ngModel required>
+                        <!-- validation -->
+                        <!-- kiểm tra rỗng -->
+                        <div *ngIf="Email.errors && (Email.dirty || Email.touched)">
+                            <p *ngIf="Email.errors.required" class="thong-bao">
+                            Vui lòng nhập nhập email!
+                            </p>
+                    
+                            <!-- kiểm tra đúng định dạng -->
+                            <p *ngIf="Email.errors.pattern" class="thong-bao">
+                            Email không đúng định dạng!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Số điện thoại" name="soDT" #soDT="ngModel" ngModel required>
+                        <!-- validation -->
+                        <div *ngIf="soDT.errors && (soDT.dirty || soDT.touched)">
+                            <!-- kiểm tra rỗng -->
+                            <p *ngIf="soDT.errors.required" class="thong-bao">
+                            vui lòng nhập số điện thoại!
+                            </p>
+                            <!-- kiểm tra số -->
+                        </div>
+                    </div>
+                    <p>Bạn đã có tài khoản?<a data-toggle="modal" data-target="#modalDangKy" (click)="hienDangNhap()">Đăng nhập</a></p>
+                    <button type="submit" class="btn btn-primary btn-modal" [disabled]="!registerForm.valid">Đăng ký</button>
+                </form>
+            </div>    
+        </div>
+    </div>
+</div>
+
+<ng-container *ngIf="nguoiDung">
+<!-- modal thông tin người dùng -->
+<div class="modal fade modalAccount" id="modalNguoiDung">
+    <div class="modal-dialog">
+        <div class="modal-content modal-dang-ky">
+    
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Thông tin người dùng</h4>
+            </div>
+        
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form #editForm = "ngForm" (ngSubmit) = "capNhat(editForm.value)">
+                    <div class="form-group">
+                        <input [disabled]="statusEdit" type="text" minlength="3" maxlength="10" name="TaiKhoan" class="form-control" placeholder="Tài khoản" #TaiKhoan="ngModel" [(ngModel)]="nguoiDung.TaiKhoan" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Họ tên" name="HoTen" #HoTen="ngModel" [(ngModel)]="nguoiDung.HoTen" required>
+                        <!-- validation -->
+                        <div *ngIf="HoTen.errors && (HoTen.dirty || HoTen.touched)">
+                            <!-- kiểm tra rỗng -->
+                            <p *ngIf="HoTen.errors.required" class="thong-bao">
+                            vui lòng nhập họ tên!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" name="Email" #Email="ngModel" [(ngModel)]="nguoiDung.Email" required>
+                        <!-- validation -->
+                        <!-- kiểm tra rỗng -->
+                        <div *ngIf="Email.errors && (Email.dirty || Email.touched)">
+                            <p *ngIf="Email.errors.required" class="thong-bao">
+                            Vui lòng nhập nhập email!
+                            </p>
+                    
+                            <!-- kiểm tra đúng định dạng -->
+                            <p *ngIf="Email.errors.pattern" class="thong-bao">
+                            Email không đúng định dạng!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Số điện thoại" name="SoDT" #SoDT="ngModel" pattern="^(0|[1-9][0-9]*)$" [(ngModel)]="nguoiDung.SoDT" required>
+                        <!-- validation -->
+                        <div *ngIf="SoDT.errors && (SoDT.dirty || SoDT.touched)">
+                            <!-- kiểm tra rỗng -->
+                            <p *ngIf="SoDT.errors.required" class="thong-bao">
+                            vui lòng nhập số điện thoại!
+                            </p>
+                    
+                            <!-- kiểm tra số -->
+                            <p *ngIf="SoDT.errors.pattern" class="thong-bao">
+                            vui lòng nhập số!
+                            </p>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-modal" [disabled]="!editForm.valid">Cập nhật</button>
+                </form>
+            </div>    
+        </div>
+    </div>
+</div>
+
+<!-- modal đổi mật khẩu -->
+<div class="modal fade modalAccount" id="modalDoiMatKhau">
+        <div class="modal-dialog">
+            <div class="modal-content modal-dang-ky">
+        
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Đổi mật khẩu</h4>
+                </div>
+            
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form #changePassForm = "ngForm" (ngSubmit) = "doiMatKhau(changePassForm.value)">
+                        <div class="form-group">
+                            <input type="password" class="form-control" placeholder="Mật khẩu hiện tại" name="MatKhau" #MatKhau="ngModel" [(ngModel)]="nguoiDung.MatKhau" required>
+                            <!-- validation -->
+                            <div *ngIf="MatKhau.errors && (MatKhau.dirty || MatKhau.touched)">
+                                <!-- kiểm tra rỗng -->
+                                <p *ngIf="MatKhau.errors.required" class="thong-bao">
+                                vui lòng nhập mật khẩu!
+                                </p>
+                            </div>
+                        </div>  
+                        <div class="form-group">
+                            <input type="password" class="form-control" placeholder="Mật khẩu mới" name="MatKhauMoi" #MatKhauMoi="ngModel" ngModel required>
+                            <!-- validation -->
+                            <div *ngIf="MatKhauMoi.errors && (MatKhauMoi.dirty || MatKhauMoi.touched)">
+                                <!-- kiểm tra rỗng -->
+                                <p *ngIf="MatKhauMoi.errors.required" class="thong-bao">
+                                vui lòng nhập mật khẩu mới!
+                                </p>
+                            </div>
+                        </div>                   
+                        <button type="submit" class="btn btn-primary btn-modal" [disabled]="!changePassForm.valid">Cập nhật</button>
+                    </form>
+                </div>    
+            </div>
+        </div>
+    </div>
+</ng-container>
+
+<div class="modal fade loginFail" id="modalAlert">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    {{alert}}
+                </h4>
+            </div>
+        </div>
+    </div>
+</div>
